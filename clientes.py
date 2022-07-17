@@ -1,27 +1,57 @@
 
 
 import os
+from typing import List
 from validacoes import validemail
 from validacoes import cadastrocpf
 from time import sleep
+import pickle
 
 
 
 
-#DICIONÁRIO USADO PARA FACILITAR OS TESTES
-#IREMOS SALVAR EM ARQUIVO FUTURAMENTE
-dicionario = {
-               
-            '161.797.240-16': ['Erick Bezerra Ribeiro Trindade', '04/06/2003', 'erickbrtrindade@gmail.com', 'Rua Olegário Vale 1290 Centro', ''],
-            '376.431.910-00': ['Manuelly Rodrigues Victor', '24/06/2000', 'manuellyrodrigues@gmail.com', 'Rua Capitão antonio Martins 88', 'apartamento'],
-            '059.509.594-18': ['Italo Mauricio ', '30/30/1998', 'italomauricio@gmail.com', 'Rua dos Potros 1340', 'casa']
+def listararquivo():
+    try:
+        listclient = open("clientelist.dat", "rb")
+        registro = pickle.load(registro, listclient)
+        listclient.close()
+    except:
+        listclient = open("clientelist.dat", "wb")
+        listclient.close()
 
-            }
+        return registro
+
+
+
+
+def gravaarquivo(registro):
+    listclient = open("clientelist.dat", "wb")
+    pickle.dump(registro, listclient)
+    listclient.close()
+
+
+
+registro = {}
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
 
 
 #função de cadastro do cliente.
 def cadastrocliente():
     os.system('cls')
+    
     
     print('''   Bem vindo ao nosso Sistema Integrado!
     Aqui você será muito bem atendido
@@ -38,22 +68,26 @@ def cadastrocliente():
         else:
             print("Email inválido!")
     endereco = input("Digite o endereço do cliente: ") #aqui o cliente irá digitar o seu endereço
-    complemento = input("Digite o complemento(Opcional): ") #aqui caso o cliente queira digitar um complemento
+    complemento = input("Digite o complemento(Opcional): ")
+    
     while True:
+         
         cpf = input("Por favor, digite um CPF válido: ") #aqui o cliente vai digitar o seu cpf
         if(cadastrocpf(cpf)):
-            if cpf not in dicionario: #caso ele não esteja no dicionário, ele irá colocar
-                dicionario[cpf] = [nome,nascimento,email,endereco,complemento] #dicionário recebe as informações
-                print(dicionario[cpf]) #irá mostrar o dicionário
+            if cpf not in registro: #caso ele não esteja no dicionário, ele irá colocar
+                registro[cpf] = [nome,nascimento,email,endereco,complemento] #dicionário recebe as informações
+                print(registro[cpf]) #irá mostrar o dicionário
                 print('Parabéns, você foi cadastrado com sucesso!')
                 break
-            elif(cpf == dicionario):#caso o cpf digitado for igual a algum já cadastrado, retorna o erro.
+            elif(cpf == registro):#caso o cpf digitado for igual a algum já cadastrado, retorna o erro.
                 print('CPF Já registrado, tente novamente!')
         else:
-            print('CPF inválido!')  
+            print('CPF inválido!') 
 
     sleep(3) # decidimos usar sleep para facilitar a visualização final
     telaprincipalcliente()
+        
+        
 
 
 
@@ -70,43 +104,43 @@ def atualizarcliente():
    
     while True:
         cpf = input("Por favor, insira um CPF já cadastrado: ")#cliente vai digitar qual cpf ele cadastrou
-        if cpf in dicionario.keys(): #se ele estiver no dicionário ele entra
-            print(dicionario[cpf][0]) #exibe o dicionário
+        if cpf in registro.keys(): #se ele estiver no dicionário ele entra
+            print(registro[cpf][0]) #exibe o dicionário
             print('Perfeito, localizamos o cliente no nosso sistema!')
             sleep(1)
             cadastro_novo = ' '
             cadastro_novo = input('Digite qual informação você deseja atualizar: ').upper() #cliente digita qual informação ele quer alterar
             if cadastro_novo == 'nome'.upper(): #caso ele queira o nome, irá entrar na parte de alteração do nome
                 nome_novo = input('Digite um novo nome: ') #ele insere o novo nome
-                dicionario[cpf][0] = nome_novo # o novo nome vai ser inserido no dicionário
+                registro[cpf][0] = nome_novo # o novo nome vai ser inserido no dicionário
                 print('Nome atualizado com sucesso!')
                 print(f'O novo nome cadastrado é {nome_novo}')
                 break
             
             elif cadastro_novo == 'data de nascimento'.upper(): #caso ele queira a data de nascimento, ele entra na parte de alteração da data de nascimento.
                 data_novo = input('Digite uma nova data de nascimento: ') # digita a nova data de nascimento
-                dicionario[cpf][1] = data_novo # armazena no dicionário posição data a nova data
+                registro[cpf][1] = data_novo # armazena no dicionário posição data a nova data
                 print('Sua data de nascimento foi atualizada!')
                 print(f'Sua nova data de nascimento é {data_novo}')# exibe a nova data de nascimento
                 break
                 
             elif cadastro_novo == 'email'.upper(): #caso ele queira mudar o email, ele entra na parte de alteração de email
                 email_novo = input('Digite um novo email: ') # digita o novo email
-                dicionario[cpf][2] = email_novo # novo email é adicionado na posição email
+                registro[cpf][2] = email_novo # novo email é adicionado na posição email
                 print('Seu email foi atualizado com sucesso!')
                 print(f'Seu novo email é {email_novo}') # exibe o email novo
                 break
                 
             elif cadastro_novo == 'endereço'.upper(): # caso ele queira alterar o seu endereço, entra na parte de alteração de endereço
                 endereco_novo = input('Digite seu novo endereço: ') # digita o endereço novo
-                dicionario[cpf][3] = endereco_novo # adiciona a lista o novo endereço digitado
+                registro[cpf][3] = endereco_novo # adiciona a lista o novo endereço digitado
                 print("Seu endereço foi atualizado!")
                 print(f'Seu novo endereço é {endereco_novo}') # exibe o novo endereço de email
                 break
                 
             elif cadastro_novo == 'opcional endereço'.upper(): # caso ele queria adicionar algum endereço opcional
                 opendereco_novo = input('Digite seu endereço opcional novo: ') # digita o novo endereço opcional
-                dicionario[cpf][4] = opendereco_novo # adiciona o endereço opcional ao dicionário
+                registro[cpf][4] = opendereco_novo # adiciona o endereço opcional ao dicionário
                 print("Seu endereço opcional foi atualizado com sucesso!")
                 print(f'Seu novo endereço opcional é {opendereco_novo}') # exibe o novo endereço opcional
                 break
@@ -138,12 +172,13 @@ def visualizarcliente():
         ''')
     sleep(1)
     cpf = input('Digite o CPF que foi cadastrado por gentileza!: ') # cliente digita qual cliente quer visualizar a partir de seu cpf
-    while cpf != dicionario: #enquanto o cpf for diferente de dicionário, ele entra
-        if cpf not in dicionario:
+    while cpf != registro: #enquanto o cpf for diferente de dicionário, ele entra
+        if cpf not in registro:
             print('Usuário não encontrado!')
+            return False
         else:
             print('Usuário encontrado!')
-            print(dicionario[cpf])
+            print(registro[cpf])
             break
     
     sleep(3) # decidimos usar sleep para facilitar a visualização final
@@ -164,8 +199,8 @@ def deletarcliente():
         ''')
     sleep(1)
     cliente = input('Por favor, digite o CPF do cliente que você deseja apagar: ') # cliente vai digitar o cpf que ele quer tirar do sistema
-    if cliente in dicionario: # se ele estiver no dicionário (sistema)
-        del dicionario[cliente] # deleta o cliente
+    if cliente in cl: # se ele estiver no dicionário (sistema)
+        del cl[cliente] # deleta o cliente
         print('Perfeito, usuário encontrado e excluído com sucesso!')
     else:
         print("Infelizmente não encontramos este usuário em nosso sistema!")  # caso não exista o usuário no sistema
@@ -181,7 +216,7 @@ def deletarcliente():
 #Função de chamada da tela principal de menu clientes
 def telaprincipalcliente(): # Aréa do cliente
     os.system('cls')
-    
+    usuário = ' '
     print('=='*28)
     print('''
         = SISTEMA DE GERENCIAMENTO DE CLIENTES =
@@ -215,8 +250,6 @@ def telaprincipalcliente(): # Aréa do cliente
             return False 
 
         
-
-
 
 
 
